@@ -1,0 +1,52 @@
+[
+    {
+      "cpu": 256,
+      "essential": true,
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "wget",
+          "-q",
+          "http://localhost:80",
+          "-O",
+          "/dev/null"
+        ],
+        "interval": 15,
+        "retries": 3,
+        "startPeriod": 30,
+        "timeout": 5
+      },
+      "image": "357982985018.dkr.ecr.eu-west-2.amazonaws.com/aspnetapp:1.0.0",
+      "memory": 128,
+      "name": "aspnetapp"
+    },
+    {
+      "cpu": 256,
+      "essential": true,
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "curl",
+          "--fail",
+          "http://localhost:8080/nginx_status"
+        ],
+        "interval": 15,
+        "retries": 3,
+        "startPeriod": 30,
+        "timeout": 5
+      },
+      "image": "357982985018.dkr.ecr.eu-west-2.amazonaws.com/nginx:1.19.6-ao1u1",
+      "links": [
+          "aspnetapp"
+      ],
+      "memory": 128,
+      "name": "nginx",
+      "portMappings": [
+          {
+              "containerPort": 80,
+              "hostPort": 80,
+              "protocol": "tcp"
+          }
+      ]
+    }
+]

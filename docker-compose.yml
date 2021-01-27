@@ -1,0 +1,39 @@
+---
+version: '3'
+
+services:
+  aspnetapp:
+    build:
+      context: ./aspnetapp
+    depends_on:
+      - nginx
+    healthcheck:
+      test: ["CMD", "wget", "-q", "http://localhost:80/", "-O", "/dev/null" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    image: 357982985018.dkr.ecr.eu-west-2.amazonaws.com/aspnetapp:1.0.0
+    networks:
+      - aspnetapp
+    restart: unless-stopped
+  nginx:
+    build:
+      context: ./nginx
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/nginx_status" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    image: 357982985018.dkr.ecr.eu-west-2.amazonaws.com/nginx:1.19.6-ao1u1
+    networks:
+      - aspnetapp
+    ports:
+      - 80:80
+    restart: unless-stopped
+
+networks:
+  aspnetapp:
+    driver: bridge
+    name: aspnetapp
